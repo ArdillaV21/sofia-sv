@@ -41,13 +41,13 @@ const photosData: PhotoData[] = [
   {
     id: "la-cotidiana",
     title: "La cotidiana",
-    image: "/la-cotidiana.jpeg",
+    image: "/ojos-confidentes.jpeg",
     text: "Algunos escritores literarios han sido capaces de sumergirse en el realismo mágico, transformando lo cotidiano en algo mágico. El realismo mágico, al introducir elementos extraordinarios en la vida diaria, convierte lo mundano en algo misterioso y encantador. Esta corriente invita al lector a cuestionar y explorar las complejidades de la existencia humana y su relación con el mundo que lo rodea.",
   },
   {
     id: "ojos-confidentes",
     title: "Ojos confidentes",
-    image: "/ojos-confidentes.jpeg",
+    image: "/la-cotidiana.jpeg",
     text: "Las miradas no mienten, y esta foto lo deja en claro. Poder encontrarnos en nuestros ojos, saber lo que pensamos o cómo nos sentimos. Te considero mi confidente, por eso siempre te ofrezco mi mirada más sincera.",
   },
   {
