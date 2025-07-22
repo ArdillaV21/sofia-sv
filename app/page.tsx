@@ -53,20 +53,14 @@ const photosData: PhotoData[] = [
   {
     id: "segundo-aniversario",
     title: "Segundo Aniversario",
-    image: "/images/segundo-aniversario.jpg",
+    image: "/2doAniversario.jpg",
     text: "Dos años de amor, risas, aventuras y crecimiento juntos. Cada día a tu lado es un regalo que atesoro en mi corazón. Gracias por hacer de estos dos años los más hermosos de mi vida.",
   },
   {
     id: "nuestros-suenos",
     title: "Nuestros Sueños",
-    image: "/images/nuestros-suenos.jpg",
+    image: "/sueños.jpeg",
     text: "Soñamos juntos, construimos juntos, y cada meta alcanzada es más dulce cuando la compartimos. Nuestros sueños se entrelazan como nuestras manos, creando un futuro lleno de posibilidades.",
-  },
-  {
-    id: "para-siempre",
-    title: "Para Siempre",
-    image: "/images/para-siempre.jpg",
-    text: "En cada amanecer veo nuestro futuro, en cada atardecer agradezco nuestro presente. Contigo he encontrado mi para siempre, y no puedo esperar a vivir todas las aventuras que nos esperan.",
   },
 ]
 
@@ -79,12 +73,15 @@ export default function SofiaApp() {
     minutes: 0,
     seconds: 0,
   })
+  // Simulación desactivada: comportamiento real
+  const SIMULATE = false; // Cambia a true para simular
+  const initialSimulatedDate = new Date(new Date("2025-07-22T00:00:00").getTime() - 10000);
+  const [simulatedNow, setSimulatedNow] = useState(initialSimulatedDate);
+  const now = SIMULATE ? simulatedNow : new Date();
 
-  const calculateTimeLeft = () => {
+  const calculateTimeLeft = (date = now) => {
     const targetDate = new Date("2025-07-22T00:00:00")
-    const now = new Date()
-    const difference = targetDate.getTime() - now.getTime()
-
+    const difference = targetDate.getTime() - date.getTime()
     if (difference > 0) {
       return {
         days: Math.floor(difference / (1000 * 60 * 60 * 24)),
@@ -96,27 +93,37 @@ export default function SofiaApp() {
     return { days: 0, hours: 0, minutes: 0, seconds: 0 }
   }
 
-  const isAnniversaryPassed = () => {
+  const isAnniversaryPassed = (date = now) => {
     const targetDate = new Date("2025-07-22T00:00:00")
-    const now = new Date()
-    return now >= targetDate
+    return date >= targetDate
   }
 
   const getPhotosToShow = () => {
-    if (isAnniversaryPassed()) {
-      return photosData // Mostrar todas las fotos incluyendo las 3 nuevas
+    if (isAnniversaryPassed(now)) {
+      return photosData // Mostrar todas las fotos incluyendo las nuevas
     }
     return photosData.slice(0, 6) // Mostrar solo las primeras 6 fotos
   }
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft())
-    }, 1000)
-
-    setTimeLeft(calculateTimeLeft())
-
-    return () => clearInterval(timer)
+    if (SIMULATE) {
+      let interval: NodeJS.Timeout;
+      setTimeLeft(calculateTimeLeft(simulatedNow));
+      interval = setInterval(() => {
+        setSimulatedNow((prev) => {
+          const next = new Date(prev.getTime() + 1000);
+          setTimeLeft(calculateTimeLeft(next));
+          return next;
+        });
+      }, 1000);
+      return () => clearInterval(interval);
+    } else {
+      const timer = setInterval(() => {
+        setTimeLeft(calculateTimeLeft(new Date()));
+      }, 1000)
+      setTimeLeft(calculateTimeLeft(new Date()))
+      return () => clearInterval(timer)
+    }
   }, [])
 
   const openGallery = () => {
@@ -137,33 +144,42 @@ export default function SofiaApp() {
   }
 
   if (!showGallery) {
+    const anniversaryReached = isAnniversaryPassed(simulatedNow);
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-200 via-pink-300 to-pink-400 flex flex-col items-center justify-center gap-6 sm:gap-8 px-4">
-        {/* Contador de aniversario */}
+        {/* Contador de aniversario o mensaje especial */}
         <div className="text-center w-full max-w-md">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4 sm:mb-6 drop-shadow-lg px-2">
-            2do Aniversario
-          </h2>
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-lg mx-auto">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 text-center">
-              <div className="flex flex-col">
-                <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-pink-600">{timeLeft.days}</div>
-                <div className="text-xs sm:text-sm text-gray-600 mt-1">Días</div>
+          {anniversaryReached ? (
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 drop-shadow-lg px-2 animate-pulse">
+              ¡Feliz 2do aniversario mi amor!
+            </h2>
+          ) : (
+            <>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4 sm:mb-6 drop-shadow-lg px-2">
+                2do Aniversario
+              </h2>
+              <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-lg mx-auto">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 text-center">
+                  <div className="flex flex-col">
+                    <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-pink-600">{timeLeft.days}</div>
+                    <div className="text-xs sm:text-sm text-gray-600 mt-1">Días</div>
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-pink-600">{timeLeft.hours}</div>
+                    <div className="text-xs sm:text-sm text-gray-600 mt-1">Horas</div>
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-pink-600">{timeLeft.minutes}</div>
+                    <div className="text-xs sm:text-sm text-gray-600 mt-1">Minutos</div>
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-pink-600">{timeLeft.seconds}</div>
+                    <div className="text-xs sm:text-sm text-gray-600 mt-1">Segundos</div>
+                  </div>
+                </div>
               </div>
-              <div className="flex flex-col">
-                <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-pink-600">{timeLeft.hours}</div>
-                <div className="text-xs sm:text-sm text-gray-600 mt-1">Horas</div>
-              </div>
-              <div className="flex flex-col">
-                <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-pink-600">{timeLeft.minutes}</div>
-                <div className="text-xs sm:text-sm text-gray-600 mt-1">Minutos</div>
-              </div>
-              <div className="flex flex-col">
-                <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-pink-600">{timeLeft.seconds}</div>
-                <div className="text-xs sm:text-sm text-gray-600 mt-1">Segundos</div>
-              </div>
-            </div>
-          </div>
+            </>
+          )}
         </div>
 
         {/* Botón de corazón */}
